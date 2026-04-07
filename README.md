@@ -1,159 +1,196 @@
-# Turborepo starter
+<div align="center">
 
-This Turborepo starter is maintained by the Turborepo core team.
+# ERP System
 
-## Using this example
+**A modern, modular ERP platform built for scalability, clean architecture, and real-world business operations.**
 
-Run the following command:
+![Status](https://img.shields.io/badge/status-active%20development-blue?style=flat-square)
+![License](https://img.shields.io/badge/license-proprietary-red?style=flat-square)
+![Stack](https://img.shields.io/badge/stack-Next.js%20%7C%20NestJS%20%7C%20PostgreSQL-informational?style=flat-square)
+![Monorepo](https://img.shields.io/badge/monorepo-TurboRepo-blueviolet?style=flat-square)
 
-```sh
-npx create-turbo@latest
+</div>
+
+---
+
+## Overview
+
+This project is a modern, modular ERP system designed to combine advanced software engineering learning with the development of a production-ready, commercially viable product.
+
+It replicates real-world enterprise scenarios, focusing on **scalability**, **maintainability**, and **clean architecture** — progressively evolving into a system capable of serving actual business operations.
+
+---
+
+## Purpose
+
+The project is driven by two core objectives:
+
+### 1. Learning and Technical Growth
+
+Building deep expertise across:
+
+- Backend architecture and scalable system design
+- Frontend application structure and state management
+- Database modeling and data integrity
+- API design and integration
+- Monorepo architecture and code sharing strategies
+- Real-world development workflows and best practices
+
+### 2. Product Development and Commercialization
+
+Evolving into a fully functional ERP that can:
+
+- Be deployed in production environments
+- Support real business processes
+- Be customized for different industries
+- Be offered as a **SaaS or licensed solution**
+
+---
+
+## Vision
+
+The long-term vision of this project is to become:
+
+- A robust ERP platform for **small and medium-sized businesses**
+- A customizable and modular system adaptable to multiple domains
+- A scalable foundation supporting **multi-tenant architectures**
+- A commercial product ready for market distribution
+
+---
+
+## Core Features *(Planned)*
+
+### Authentication and Security
+- JWT-based authentication
+- Role-based access control (RBAC)
+- Permission management system
+
+### Business Modules
+- Customer and company management
+- Product and inventory management
+- Orders and workflow tracking
+- Financial tracking *(future)*
+
+### Operational Tools
+- Dashboard with key metrics
+- Activity logs and auditing
+- Reporting and analytics
+
+### System Capabilities
+- Modular architecture for feature expansion
+- API-first design
+- Centralized data management
+
+---
+
+## Architecture
+
+The system is built using a **monorepo architecture**, allowing multiple applications and shared packages to coexist in a single repository.
+
+### Architectural Principles
+
+- Modular monolith (backend structured by domain modules)
+- Clear separation of concerns
+- Reusable shared packages (types, utilities, configs)
+- Scalable folder and code organization
+- Incremental evolution towards microservices *(if needed)*
+
+### Backend Structure
+
+```
+Domain-driven modules (users, orders, inventory, ...)
+└── Layered architecture
+    ├── Controllers  → HTTP layer
+    ├── Services     → Business logic
+    └── Repositories → Data access (via Prisma ORM)
 ```
 
-## What's inside?
+### Frontend Structure
 
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```
+Feature-based organization
+├── API consumption layer (services)
+├── Reusable UI components
+└── Scalable routing (App Router)
 ```
 
-Without global `turbo`, use your package manager:
+---
 
-```sh
-cd my-turborepo
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+## Technology Stack
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+| Layer        | Technology                                |
+|--------------|-------------------------------------------|
+| **Frontend** | Next.js (App Router) + TypeScript + Axios |
+| **Backend**  | NestJS + TypeScript + Prisma ORM          |
+| **Database** | PostgreSQL (via Supabase)                 |
+| **Monorepo** | TurboRepo + npm Workspaces                |
+| **Config**   | Environment-based configuration           |
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+---
 
-```sh
-turbo build --filter=docs
-```
+## Development Workflow
 
-Without global `turbo`:
+- **Trunk-based development** — `main` branch + short-lived feature branches
+- **Conventional Commits** — clear and consistent version history
+- Incremental feature development
+- Continuous refactoring and improvement
+- Focus on maintainability and readability
 
-```sh
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+---
 
-### Develop
+## Scalability Strategy
 
-To develop all apps and packages, run the following command:
+### Short Term
+- Modular monolith architecture
+- Centralized database
+- Simple deployment pipeline
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+### Mid Term
+- Introduction of caching (e.g., Redis)
+- Background jobs and queues
+- Performance optimizations
 
-```sh
-cd my-turborepo
-turbo dev
-```
+### Long Term
+- Service decomposition (microservices if needed)
+- Multi-tenant support
+- Horizontal scaling and cloud-native architecture
 
-Without global `turbo`, use your package manager:
+---
 
-```sh
-cd my-turborepo
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+## Deployment Strategy
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+Each component is deployed independently:
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+| Component    | Deployment                             |
+|--------------|----------------------------------------|
+| **Frontend** | Web application (Vercel / custom)      |
+| **Backend**  | API service (Railway / Docker / cloud) |
+| **Database** | Managed PostgreSQL via Supabase        |
 
-```sh
-turbo dev --filter=web
-```
+> The architecture supports **continuous deployment** and **independent scaling** of all components.
 
-Without global `turbo`:
+---
 
-```sh
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+## Roadmap
 
-### Remote Caching
+- [ ] Complete authentication and authorization system
+- [ ] Implement core ERP modules
+- [ ] Improve UI/UX and usability
+- [ ] Add reporting and analytics features
+- [ ] Introduce multi-tenant architecture
+- [ ] Prepare system for commercial deployment
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+---
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+## Disclaimer
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+This project is currently under **active development** and is primarily focused on learning and experimentation.
+It is being built following **production-level standards** with the intention of evolving into a commercial product.
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+---
 
-```sh
-cd my-turborepo
-turbo login
-```
+<div align="center">
 
-Without global `turbo`, use your package manager:
+*Built with purpose — engineered for scale.*
 
-```sh
-cd my-turborepo
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+</div>

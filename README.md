@@ -159,7 +159,7 @@ Feature-based organization
 | **Frontend** | Next.js (App Router) + TypeScript + Axios |
 | **Backend**  | NestJS + TypeScript + Prisma ORM          |
 | **Database** | PostgreSQL (via Supabase)                 |
-| **Monorepo** | TurboRepo + npm Workspaces                |
+| **Monorepo** | TurboRepo + pnpm Workspaces               |
 | **Config**   | Environment-based configuration           |
 
 > The first version of the system was built with Laravel (PHP 11.x), React 18.x, and MySQL. The current version adopts a TypeScript-first stack across frontend and backend.

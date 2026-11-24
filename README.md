@@ -161,7 +161,7 @@ Feature-based organization
 | **Database** | PostgreSQL (via Supabase)                 |
 | **Monorepo** | TurboRepo + pnpm Workspaces               |
 | **Config**   | Environment-based configuration           |
-| **Testing**  | Jest + Supertest (API), Vitest + Testing Library + MSW (web), Playwright (E2E) |
+| **Testing**  | Vitest + Supertest (API), Vitest + Testing Library + MSW (web), Playwright (E2E) |
 | **API docs** | OpenAPI / Swagger UI                      |
 
 > The first version of the system was built with Laravel (PHP 11.x), React 18.x, and MySQL. The current version adopts a TypeScript-first stack across frontend and backend.
@@ -222,7 +222,7 @@ Mock mode notes:
 
 | Command                       | Runs                                                                      |
 | ----------------------------- | ------------------------------------------------------------------------- |
-| `pnpm test`                   | Unit tests: API (Jest) and web (Vitest + Testing Library + MSW)           |
+| `pnpm test`                   | Unit tests with Vitest: API and web (Testing Library + MSW)               |
 | `pnpm test:e2e`               | Browser E2E (Playwright) against the web in mock mode. Runs in CI.        |
 | `pnpm test:e2e:real`          | The same E2E specs against the real API and database                      |
 | `pnpm --filter api test:e2e`  | API e2e (Supertest) against the database in `apps/api/.env`               |

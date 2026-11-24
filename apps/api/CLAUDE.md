@@ -9,7 +9,7 @@ pnpm --filter api dev                # nest start --watch (port 3001)
 pnpm --filter api build
 pnpm --filter api lint               # eslint --fix
 pnpm --filter api check-types
-pnpm --filter api test               # jest unit tests
+pnpm --filter api test               # vitest unit tests (test:watch, test:cov)
 pnpm --filter api test:e2e           # supertest, uses the database in .env (local only, not in CI)
 pnpm --filter api prisma:generate    # also runs on pnpm install (postinstall)
 pnpm --filter api prisma:migrate --name <snake_case_name>
@@ -77,8 +77,8 @@ src/
 
 - The API stays **CommonJS** while NestJS 12 packages (`@nestjs/*`) are **ESM-only**. Compiled `require()` calls load them through Node's `require(esm)`, so don't switch the app to `"type": "module"` without a dedicated migration.
 - Keep every `@nestjs/*` package on the same major (12). Before adding a package, check its `"type"` and `peerDependencies` (`@nestjs/core ^12`).
-- TypeScript is 6.0 (required by `@nestjs/schematics` 12). TypeScript 7 is not usable yet: typescript-eslint and ts-jest don't support it.
-- The tsconfig sets `strict: false`, `types: ["node", "jest"]` and `rootDir` explicitly because TypeScript 6 changed those defaults.
+- TypeScript is 6.0 (required by `@nestjs/schematics` 12). TypeScript 7 is not usable yet: typescript-eslint doesn't support it.
+- The tsconfig sets `strict: false`, `types: ["node"]` and `rootDir` explicitly because TypeScript 6 changed those defaults.
 
 ## Tenant rules (security, non-negotiable)
 
@@ -119,6 +119,8 @@ src/
 ## Code style
 
 - Prettier: single quotes, trailing commas (`.prettierrc`). ESLint: `typescript-eslint` type-checked config.
-- `moduleResolution: nodenext`: imports of the generated Prisma client use the `.js` extension (e.g. `'../generated/prisma/client.js'`). Jest maps `.js` back to the `.ts` source (`moduleNameMapper`).
-- Tests: Jest, `*.spec.ts` next to the file under test; e2e tests in `test/` (they call `setupApp()`). Service tests must cover tenant scoping for new domain logic.
-- Every Jest script runs Node with `--experimental-vm-modules`. Jest needs it to load the ESM-only NestJS 12 packages and the dynamic `import()` the Prisma 7 client uses for its query compiler. Run tests through the `pnpm` scripts, not `npx jest`.
+- `moduleResolution: nodenext`: imports of the generated Prisma client use the `.js` extension (e.g. `'../generated/prisma/client.js'`). Vite resolves them to the `.ts` sources in tests.
+- Tests: **Vitest**, the same runner as the web. Unit tests are `*.spec.ts` next to the file under test (`vitest.config.mts`). E2E tests are `test/*.e2e-spec.ts` (`vitest.config.e2e.mts`); they call `setupApp()` and use the database in `.env`, so they run locally only.
+- Import `describe`, `it`, `expect` and `vi` from `'vitest'`; there are no test globals. Mock with `vi.fn()`.
+- Decorator metadata (Nest DI, class-transformer types) comes from Vite 8's Oxc transform reading `emitDecoratorMetadata` in tsconfig.json; no SWC plugin needed.
+- Service tests must cover tenant scoping for new domain logic.

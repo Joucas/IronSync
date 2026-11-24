@@ -18,9 +18,10 @@
     "incremental": true,
     "skipLibCheck": true,
     // TypeScript 6 defaults to strict: true and types: []; keep the previous
-    // (Nest scaffold) strictness and load the Node and Jest globals explicitly.
+    // (Nest scaffold) strictness and load the Node globals explicitly.
+    // Tests import describe/it/expect from 'vitest', so no test globals here.
     "strict": false,
-    "types": ["node", "jest"],
+    "types": ["node"],
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,

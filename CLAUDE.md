@@ -4,16 +4,16 @@ B2B multi-tenant SaaS ERP for small and mid-sized machining, metalworking and to
 
 ## Stack
 
-| Layer            | Tech                                                                                  |
-| ---------------- | ------------------------------------------------------------------------------------- |
-| Web (`apps/web`) | Next.js 16.4 (App Router), React 19.3, Tailwind CSS 4, Axios, TanStack Query 5        |
-| API (`apps/api`) | NestJS 12 (CommonJS app), Prisma 7 (`prisma-client` + driver adapter), Swagger, pino  |
-| Database         | PostgreSQL on Supabase                                                                |
-| Monorepo         | Turborepo 2, pnpm 10 workspaces                                                       |
-| Tooling          | TypeScript 6.0, ESLint 9, Prettier 3                                                  |
-| Tests            | Jest 30 + Supertest (API), Vitest 5 + Testing Library + MSW 3 (web), Playwright (E2E) |
-| CI               | GitHub Actions (`.github/workflows/ci.yml`)                                           |
-| Runtime          | Node 26 LTS (`.nvmrc`)                                                                |
+| Layer            | Tech                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------- |
+| Web (`apps/web`) | Next.js 16.4 (App Router), React 19.3, Tailwind CSS 4, Axios, TanStack Query 5              |
+| API (`apps/api`) | NestJS 12 (CommonJS app), Prisma 7 (`prisma-client` + driver adapter), Swagger, pino        |
+| Database         | PostgreSQL on Supabase                                                                      |
+| Monorepo         | Turborepo 2, pnpm 10 workspaces                                                             |
+| Tooling          | TypeScript 6.0, ESLint 9, Prettier 3                                                        |
+| Tests            | Vitest 5 in both apps: + Supertest (API), + Testing Library + MSW 3 (web); Playwright (E2E) |
+| CI               | GitHub Actions (`.github/workflows/ci.yml`)                                                 |
+| Runtime          | Node 26 LTS (`.nvmrc`)                                                                      |
 
 ## Layout
 

@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { LogLevel, NodeEnv, validateEnv } from './env.validation';
 
 const validEnv = {

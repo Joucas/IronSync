@@ -161,8 +161,116 @@ Feature-based organization
 | **Database** | PostgreSQL (via Supabase)                 |
 | **Monorepo** | TurboRepo + pnpm Workspaces               |
 | **Config**   | Environment-based configuration           |
+| **Testing**  | Jest + Supertest (API), Vitest + Testing Library + MSW (web), Playwright (E2E) |
+| **API docs** | OpenAPI / Swagger UI                      |
 
 > The first version of the system was built with Laravel (PHP 11.x), React 18.x, and MySQL. The current version adopts a TypeScript-first stack across frontend and backend.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js ≥ 20.19 (24 LTS recommended)
+- pnpm 10 (`corepack enable` installs the version pinned in `package.json`)
+- A PostgreSQL database. Development uses a Supabase project (the free plan is enough).
+
+### 1. Install
+
+```bash
+pnpm install   # also generates the Prisma client
+```
+
+### 2. Configure the environment
+
+```bash
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env.local
+```
+
+In `apps/api/.env`, set `DATABASE_URL`. In Supabase, open **Connect** and copy the **Session pooler** string (port 5432): it works over IPv4 and supports both the app and migrations. Replace `[YOUR-PASSWORD]` with the database password **without the brackets**, and URL-encode special characters.
+
+The API validates every variable at startup and refuses to start, with a clear message, when one is missing or invalid.
+
+### 3. Create the database schema
+
+```bash
+pnpm --filter api prisma:migrate
+```
+
+### 4. Run
+
+| Command         | What runs                       | Use it for                                                                    |
+| --------------- | ------------------------------- | ----------------------------------------------------------------------------- |
+| `pnpm dev`      | Web + API                       | Day-to-day work against the real API and database                             |
+| `pnpm dev:mock` | Web only, API mocked with MSW   | UI work without the API or database. A **MOCK** badge shows in the corner.    |
+
+| URL                              | What                                                  |
+| -------------------------------- | ----------------------------------------------------- |
+| http://localhost:3000            | Web app                                               |
+| http://localhost:3001/api        | API                                                   |
+| http://localhost:3001/api/docs   | API docs (Swagger UI). JSON at `/api/docs-json`.      |
+| http://localhost:3001/api/health | Health check of the API and the database              |
+
+Mock mode notes:
+
+- Mocks live next to each feature in `apps/web/src/features/<domain>/mocks.ts`. The unit tests and `pnpm dev:mock` share them.
+- Only requests made in the browser are mocked. Data fetched in Server Components is not.
+
+### Tests
+
+| Command                       | Runs                                                                      |
+| ----------------------------- | ------------------------------------------------------------------------- |
+| `pnpm test`                   | Unit tests: API (Jest) and web (Vitest + Testing Library + MSW)           |
+| `pnpm test:e2e`               | Browser E2E (Playwright) against the web in mock mode. Runs in CI.        |
+| `pnpm test:e2e:real`          | The same E2E specs against the real API and database                      |
+| `pnpm --filter api test:e2e`  | API e2e (Supertest) against the database in `apps/api/.env`               |
+
+Before the first E2E run: `pnpm --filter web exec playwright install chromium`.
+
+### Other commands
+
+| Command                           | Does                                    |
+| --------------------------------- | --------------------------------------- |
+| `pnpm lint`                       | ESLint on both apps                     |
+| `pnpm check-types`                | TypeScript check on both apps           |
+| `pnpm build`                      | Production build of both apps           |
+| `pnpm --filter api prisma:studio` | Browse the database in Prisma Studio    |
+
+Every pull request runs lint, type-check, unit tests, build and the mock-mode E2E in GitHub Actions.
+
+---
+
+## AI-Assisted Development
+
+The repository is set up for coding agents such as Claude Code:
+
+- `CLAUDE.md` files (root and per app) hold the conventions. `apps/web/AGENTS.md` points agents to the Next.js docs bundled in `node_modules/next/dist/docs/`.
+- `.mcp.json` registers the official **Next.js DevTools MCP** server. With `pnpm dev` running, the agent can read build errors, routes and logs from the dev server. Claude Code asks you to approve it the first time.
+  - **Native Windows:** `npx` cannot start without a shell there. Add a local server with the same name, which takes precedence over the project one:
+
+    ```bash
+    claude mcp add --scope local next-devtools -- cmd /c npx -y next-devtools-mcp@latest
+    ```
+
+Recommended skills, installed per machine (`-g`), not stored in the repository:
+
+```bash
+npx skills add vercel/next.js --skill next-dev-loop -g
+npx skills add vercel-labs/agent-skills --skill vercel-react-best-practices -g
+npx skills add vercel-labs/agent-skills --skill vercel-composition-patterns -g
+npx skills add vercel-labs/agent-skills --skill web-design-guidelines -g
+```
+
+| Skill                         | Use it for                                                         |
+| ----------------------------- | ------------------------------------------------------------------ |
+| `next-dev-loop`               | Verify changes against the running dev server and a real browser   |
+| `vercel-react-best-practices` | React and Next.js performance rules                                |
+| `vercel-composition-patterns` | Component API design                                               |
+| `web-design-guidelines`       | UI and accessibility review                                        |
+
+Optional: `design-taste-frontend` (`npx skills add Leonxlnx/taste-skill -g`) targets landing pages and marketing sites rather than ERP screens.
 
 ---
 

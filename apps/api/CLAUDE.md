@@ -5,16 +5,16 @@ NestJS 11 API. Owns business rules, auth, tenant isolation and all database acce
 ## Commands
 
 ```bash
-pnpm --filter api dev        # nest start --watch (port 3001)
+pnpm --filter api dev                # nest start --watch (port 3001)
 pnpm --filter api build
-pnpm --filter api lint       # eslint --fix
-pnpm --filter api test       # jest unit tests
-pnpm --filter api test:e2e
-pnpm --filter api exec prisma generate
-pnpm --filter api exec prisma migrate dev
+pnpm --filter api lint               # eslint --fix
+pnpm --filter api check-types
+pnpm --filter api test               # jest unit tests
+pnpm --filter api test:e2e           # supertest, uses the database in .env (local only, not in CI)
+pnpm --filter api prisma:generate    # also runs on pnpm install (postinstall)
+pnpm --filter api prisma:migrate --name <snake_case_name>
+pnpm --filter api prisma:studio
 ```
-
-Once `prisma:generate`, `prisma:migrate` and `prisma:studio` scripts exist in `package.json`, prefer them.
 
 ## Module layout
 
@@ -26,26 +26,56 @@ src/
     <domain>.module.ts
     <domain>.controller.ts
     <domain>.service.ts
-    dto/                    create-*.dto.ts, update-*.dto.ts, list-*.query.ts
+    dto/                    create-*.dto.ts, update-*.dto.ts, list-*.query.ts, *-response.dto.ts
     <domain>.service.spec.ts
-  common/                   cross-cutting code (tenant/, guards, filters, utils)
+  common/                   cross-cutting code
+    config/                 env.validation.ts (every env var the API reads)
+    logger/                 pino.config.ts
   prisma/                   PrismaModule (@Global) + PrismaService
+  generated/prisma/         Prisma client (generated, gitignored)
+  health/                   GET /api/health (reference module)
+  app.setup.ts              HTTP setup shared by main.ts and the e2e tests
   app.module.ts
   main.ts
 ```
 
 - Controllers are thin: parse input, call the service, return. Logic goes in services.
 - Register new modules in `AppModule`.
-- `src/users/` is the Nest CLI scaffold, not a real module yet. Don't build on it until the company/user step.
+- `src/users/` is the Nest CLI scaffold, not a real module and not imported. Don't build on it until the company/user step.
 
-## Bootstrap (expected in `main.ts`)
+## Bootstrap
 
-Check `src/main.ts` before assuming. The target setup is:
+`setupApp()` in `src/app.setup.ts` holds the HTTP setup, so the e2e tests run the same configuration as the server:
 
+- `helmet()` security headers.
 - Global prefix `api` → routes are `/api/<resource>`.
-- `ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true })`.
 - CORS: `origin` = exact `FRONTEND_URL`, `credentials: true`.
-- `ConfigModule.forRoot({ isGlobal: true })`. Read env via `ConfigService`, not `process.env` scattered in services.
+- `ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true })`.
+- Swagger UI at `/api/docs` (JSON at `/api/docs-json`) when `SWAGGER_ENABLED=true`.
+- Shutdown hooks (closes the Prisma pool on SIGTERM).
+
+`main.ts` adds the pino logger (`bufferLogs` + `app.useLogger`) and listens on `PORT`.
+
+## Environment
+
+- Every variable is declared and validated in `src/common/config/env.validation.ts`. The API refuses to start when one is missing or invalid. New variable → add it there **and** in `.env.example`.
+- Read env through `ConfigService<EnvironmentVariables, true>` with `config.get('NAME', { infer: true })`. Never `process.env` in services.
+- Booleans need an explicit `@Transform`: env values are strings and `Boolean('false')` is `true`.
+
+## API docs (Swagger)
+
+- The `@nestjs/swagger` CLI plugin (`nest-cli.json`) documents DTOs from their TypeScript types and JSDoc comments. Return DTO classes from controllers, not inline object types.
+- Each controller gets `@ApiTags('<domain>')`. Document non-2xx outcomes with `@Api*Response` (e.g. `@ApiNotFoundResponse`).
+
+## Logging
+
+- Use Nest's `Logger` (`new Logger(MyService.name)`); it is routed to pino. Never `console.log`.
+- Each request gets an id (`x-request-id`, echoed in the response). Readable lines in development, JSON elsewhere.
+- Never log secrets, tokens, cookies or full request bodies.
+
+## Dependencies
+
+The API is CommonJS (Nest 11). Some NestJS packages moved to ESM-only majors aligned with Nest 12, which Jest cannot load here. Stay on the Nest 11 lines: `@nestjs/config` **4.x**, `@nestjs/swagger` **11.x**. Check `"type"` and `peerDependencies` before adding or upgrading a package.
 
 ## Tenant rules (security, non-negotiable)
 
@@ -60,7 +90,7 @@ Check `src/main.ts` before assuming. The target setup is:
 ## DTOs and responses
 
 - Validate with `class-validator` + `class-transformer`. Every body and query has a DTO class.
-- `Update<Entity>Dto extends PartialType(Create<Entity>Dto)`.
+- `Update<Entity>Dto extends PartialType(Create<Entity>Dto)` (import `PartialType` from `@nestjs/swagger` so docs stay in sync).
 - List query: `q?` (search), `page` (default 1), `perPage` (default 20, max 100), with `@Type(() => Number)`.
 - List response shape:
 
@@ -86,5 +116,6 @@ Check `src/main.ts` before assuming. The target setup is:
 ## Code style
 
 - Prettier: single quotes, trailing commas (`.prettierrc`). ESLint: `typescript-eslint` type-checked config.
-- `moduleResolution: nodenext`: imports of the generated Prisma client use the `.js` extension (e.g. `'../generated/prisma/client.js'`).
-- Tests: Jest, `*.spec.ts` next to the file under test; e2e tests in `test/`. Service tests must cover tenant scoping for new domain logic.
+- `moduleResolution: nodenext`: imports of the generated Prisma client use the `.js` extension (e.g. `'../generated/prisma/client.js'`). Jest maps `.js` back to the `.ts` source (`moduleNameMapper`).
+- Tests: Jest, `*.spec.ts` next to the file under test; e2e tests in `test/` (they call `setupApp()`). Service tests must cover tenant scoping for new domain logic.
+- Tests that instantiate the real Prisma client need Node's `--experimental-vm-modules`: Prisma 7 loads its query compiler with a dynamic `import()`, which Jest only allows with that flag. The `test:e2e` script passes it; unit tests mock `PrismaService` and don't need it.

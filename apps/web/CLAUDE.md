@@ -7,24 +7,33 @@ Next.js 16 (App Router) + React 19 + Tailwind CSS 4. UI only: it displays data a
 ## Commands
 
 ```bash
-pnpm --filter web dev      # next dev (port 3000)
+pnpm --filter web dev            # next dev (port 3000), against the real API
+pnpm --filter web dev:mock       # next dev with the API mocked by MSW (no API/database needed)
 pnpm --filter web build
 pnpm --filter web lint
+pnpm --filter web check-types
+pnpm --filter web test           # vitest run (test:watch for watch mode)
+pnpm --filter web test:e2e       # playwright, mock mode (runs in CI)
+pnpm --filter web test:e2e:real  # playwright, real API + database
 ```
 
 ## Structure
 
 ```text
 app/                       routes (App Router)
+  providers.tsx            client providers: TanStack Query, mock mode
   (app)/                   authenticated shell (sidebar + header)
   (auth)/                  login, sign-up, verify, password reset (no sidebar)
 src/
   services/api.ts          the single Axios instance; every API call goes through it
   components/ui/           design system primitives (Button, Input, Table, Modal…)
   components/shell/        app shell (sidebar, header, nav config)
-  features/<domain>/       per-domain code: api.ts, forms, hooks, columns
+  features/<domain>/       per-domain code: api.ts, use-*.ts hooks, mocks.ts, forms, columns
+  mocks/                   MSW setup: handlers.ts (aggregates features), node.ts, browser.ts
+  test/                    test helpers (renderWithProviders)
   lib/                     generic helpers
   types/                   shared front-end types
+e2e/                       Playwright specs
 ```
 
 - Import alias: `@/*` maps to the app root, so imports look like `@/src/services/api`.
@@ -68,6 +77,20 @@ CRUD pattern: `/<resource>` (list), `/<resource>/new`, `/<resource>/[id]` (detai
 - Every mutation (save, delete, status change) gives visible feedback (toast) and disables the trigger while pending.
 - Destructive actions ask for confirmation in a modal that names the item.
 - Show API validation errors under the matching field when possible; otherwise in a toast.
+
+## Data fetching
+
+- Client components fetch with **TanStack Query**. Per feature: `api.ts` (functions that call `api`), `use-<thing>.ts` (hooks with `useQuery`/`useMutation` and exported query keys).
+- `src/services/api.ts` uses Axios with the **fetch adapter**: same browser behavior (CORS, cookies), and MSW can intercept it in Vitest (jsdom's XHR blocks cross-origin mocks).
+- Failed calls reject with `ApiError` (`message`, `status`, `code`). Branch on `code`, never on `message`.
+
+## Mocks and tests
+
+- Every API route the web calls has an MSW handler in `src/features/<domain>/mocks.ts`, registered in `src/mocks/handlers.ts`. The same handlers serve the unit tests and `pnpm dev:mock`.
+- MSW 3: import `http`/`HttpResponse` from `msw/http`; the unhandled-request option is `onUnhandledFrame`.
+- Mock mode is browser-only: `src/mocks/mock-worker.tsx` loads through `next/dynamic` with `ssr: false` because `msw/browser` cannot resolve during SSR. It never runs in production builds. Server Component fetches are not mocked.
+- Unit tests: Vitest + Testing Library, `*.test.tsx` next to the component, rendered with `renderWithProviders` from `src/test/render.tsx`. Unmocked requests fail the test; override a handler per test with `server.use(...)`.
+- E2E: Playwright specs in `e2e/` must pass in both modes (mock and real API).
 
 ## Auth and data
 

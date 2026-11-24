@@ -4,14 +4,16 @@ B2B multi-tenant SaaS ERP for small and mid-sized machining, metalworking and to
 
 ## Stack
 
-| Layer            | Tech                                                             |
-| ---------------- | ---------------------------------------------------------------- |
-| Web (`apps/web`) | Next.js 16.4 (App Router), React 19.3, Tailwind CSS 4, Axios     |
-| API (`apps/api`) | NestJS 11, Prisma 7 (`prisma-client` generator + driver adapter) |
-| Database         | PostgreSQL on Supabase                                           |
-| Monorepo         | Turborepo 2, pnpm 10 workspaces                                  |
-| Tooling          | TypeScript 5.9, ESLint 9, Prettier 3, Jest 30 (API)              |
-| Runtime          | Node ≥ 20.19                                                     |
+| Layer            | Tech                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------- |
+| Web (`apps/web`) | Next.js 16.4 (App Router), React 19.3, Tailwind CSS 4, Axios, TanStack Query 5        |
+| API (`apps/api`) | NestJS 11, Prisma 7 (`prisma-client` generator + driver adapter), Swagger, pino       |
+| Database         | PostgreSQL on Supabase                                                                |
+| Monorepo         | Turborepo 2, pnpm 10 workspaces                                                       |
+| Tooling          | TypeScript 5.9, ESLint 9, Prettier 3                                                  |
+| Tests            | Jest 30 + Supertest (API), Vitest 5 + Testing Library + MSW 3 (web), Playwright (E2E) |
+| CI               | GitHub Actions (`.github/workflows/ci.yml`)                                           |
+| Runtime          | Node ≥ 20.19                                                                          |
 
 ## Layout
 
@@ -26,28 +28,32 @@ packages/     shared code (planned, none yet; workspace glob already set)
 
 Always use **pnpm** (never npm or yarn). From the repo root:
 
-| Command                      | Does                                      |
-| ---------------------------- | ----------------------------------------- |
-| `pnpm install`               | Install all workspaces                    |
-| `pnpm dev`                   | Run web (:3000) and API (:3001) via Turbo |
-| `pnpm build`                 | Build all apps                            |
-| `pnpm lint`                  | Lint all apps                             |
-| `pnpm check-types`           | Type-check all apps                       |
-| `pnpm format`                | Prettier on `**/*.{ts,tsx,md}`            |
-| `pnpm --filter api <script>` | Run a script in the API only              |
-| `pnpm --filter web <script>` | Run a script in the web app only          |
+| Command                      | Does                                           |
+| ---------------------------- | ---------------------------------------------- |
+| `pnpm install`               | Install all workspaces                         |
+| `pnpm dev`                   | Run web (:3000) and API (:3001) via Turbo      |
+| `pnpm dev:mock`              | Run the web only, with the API mocked (MSW)    |
+| `pnpm build`                 | Build all apps                                 |
+| `pnpm lint`                  | Lint all apps                                  |
+| `pnpm check-types`           | Type-check all apps                            |
+| `pnpm test`                  | Unit tests of all apps                         |
+| `pnpm test:e2e`              | Playwright E2E, web in mock mode (as in CI)    |
+| `pnpm test:e2e:real`         | Playwright E2E against the real API + database |
+| `pnpm format`                | Prettier on `**/*.{ts,tsx,md}`                 |
+| `pnpm --filter api <script>` | Run a script in the API only                   |
+| `pnpm --filter web <script>` | Run a script in the web app only               |
 
 ## CLAUDE.md index
 
 Nested files load automatically when working in that folder. Read the relevant one before changing code there.
 
-| File                                                                 | Covers                                                                     |
-| -------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| [apps/api/CLAUDE.md](apps/api/CLAUDE.md)                             | NestJS module layout, tenant rules, DTOs, errors, security                 |
-| [apps/api/prisma/CLAUDE.md](apps/api/prisma/CLAUDE.md)               | Schema conventions, migrations, generated client                           |
-| [apps/web/CLAUDE.md](apps/web/CLAUDE.md)                             | Next 16 caveats, folder structure, routes, i18n, styling tokens, UI states |
-| [CONTRIBUTING.md](CONTRIBUTING.md)                                   | Commit dictionary, branches, PR rules (imported below)                     |
-| [.github/pull_request_template.md](.github/pull_request_template.md) | PR body template                                                           |
+| File                                                                 | Covers                                                                                              |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| [apps/api/CLAUDE.md](apps/api/CLAUDE.md)                             | NestJS module layout, bootstrap, env, Swagger, logging, tenant rules, DTOs, errors, security        |
+| [apps/api/prisma/CLAUDE.md](apps/api/prisma/CLAUDE.md)               | Schema conventions, migrations, generated client                                                    |
+| [apps/web/CLAUDE.md](apps/web/CLAUDE.md)                             | Next 16 caveats, folder structure, routes, data fetching, mocks and tests, i18n, styling, UI states |
+| [CONTRIBUTING.md](CONTRIBUTING.md)                                   | Commit dictionary, branches, PR rules (imported below)                                              |
+| [.github/pull_request_template.md](.github/pull_request_template.md) | PR body template                                                                                    |
 
 ## Golden rules
 

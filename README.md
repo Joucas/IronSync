@@ -172,8 +172,8 @@ Feature-based organization
 
 ### Prerequisites
 
-- Node.js ≥ 20.19 (24 LTS recommended)
-- pnpm 10 (`corepack enable` installs the version pinned in `package.json`)
+- Node.js 26 LTS, the version in `.nvmrc`. A version manager switches to it automatically when you enter the folder: [fnm](https://github.com/Schniz/fnm) (`fnm env --use-on-cd` in your shell profile) or nvm.
+- pnpm 10: `npm install -g pnpm@10`. Node 25+ no longer bundles Corepack.
 - A PostgreSQL database. Development uses a Supabase project (the free plan is enough).
 
 ### 1. Install

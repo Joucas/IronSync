@@ -13,7 +13,7 @@ B2B multi-tenant SaaS ERP for small and mid-sized machining, metalworking and to
 | Tooling          | TypeScript 5.9, ESLint 9, Prettier 3                                                  |
 | Tests            | Jest 30 + Supertest (API), Vitest 5 + Testing Library + MSW 3 (web), Playwright (E2E) |
 | CI               | GitHub Actions (`.github/workflows/ci.yml`)                                           |
-| Runtime          | Node ≥ 20.19                                                                          |
+| Runtime          | Node 26 LTS (`.nvmrc`)                                                                |
 
 ## Layout
 

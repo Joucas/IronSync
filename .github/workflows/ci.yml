@@ -23,7 +23,8 @@ jobs:
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          # Same Node version as local development (fnm/nvm read .nvmrc too).
+          node-version-file: .nvmrc
           cache: pnpm
 
       # Also runs `prisma generate` (apps/api postinstall).
@@ -47,7 +48,7 @@ jobs:
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter web exec playwright install --with-deps chromium

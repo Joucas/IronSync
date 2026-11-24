@@ -44,17 +44,19 @@ company   Company @relation(fields: [companyId], references: [id], onDelete: Cas
 ## Migrations
 
 ```bash
-pnpm --filter api exec prisma migrate dev --name <snake_case_name>
+pnpm --filter api prisma:migrate --name <snake_case_name>
 ```
 
 - Name describes the change: `company_and_user`, `clients`, `auth_tokens`, `machines_hourly_rate`.
 - Never edit a migration that has been applied or committed. Create a new one.
 - Commit the migration in the same commit as the schema change.
-- Run `prisma generate` after every schema edit.
-- Supabase: use the session pooler URL (port 5432) for `migrate`.
+- Run `pnpm --filter api prisma:generate` after every schema edit (Prisma 7 `migrate dev` does not regenerate the client).
+- Supabase: use the session pooler URL (port 5432) for both the app and `migrate`.
+- `P1001 Can't reach database server` with a reachable host can be a wrong password: the Supabase pooler rejects the login and Prisma reports it as P1001. Test the URL with `pg` to see the real error.
 
 ## Generated client
 
 - Never edit generated files. They are gitignored.
-- Current output: `apps/api/generated/prisma` (`output = "../generated/prisma"`).
-- Planned (foundation step): move to `apps/api/src/generated/prisma` so `nest build` includes it. When that happens, update this section and the import paths in `apps/api/CLAUDE.md`.
+- Output: `apps/api/src/generated/prisma` (`output = "../src/generated/prisma"`), inside `src` so `nest build` compiles it.
+- `pnpm install` regenerates it (`postinstall` in `apps/api/package.json`).
+- Import it as `'../generated/prisma/client.js'` (relative, with `.js`).

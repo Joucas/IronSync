@@ -1,13 +1,20 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// Prisma schema. Conventions: apps/api/prisma/CLAUDE.md
+// Docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  // Inside src/ so `nest build` compiles it with the rest of the app.
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+/// Schema placeholder so the first migration is not empty.
+/// Replaced by Company / User in roadmap step 2.
+model HealthCheck {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

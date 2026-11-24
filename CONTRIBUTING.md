@@ -106,7 +106,7 @@ Before opening a PR:
 
 1. `pnpm lint` passes.
 2. `pnpm check-types` passes.
-3. `pnpm --filter api test` passes (and new logic has tests).
+3. `pnpm test` passes (and new logic has tests). When a UI flow changes, `pnpm test:e2e` too.
 4. Migrations are committed with their schema change.
 5. New env vars are documented in the matching `.env.example`.
 6. New UI text exists in pt-BR and en.

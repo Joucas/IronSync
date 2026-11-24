@@ -2,13 +2,19 @@ packages:
   - "apps/*"
   - "packages/*"
 
-# Pacotes autorizados a rodar install/build scripts (pnpm 10 bloqueia por padrão)
+# Packages allowed to run install/build scripts (pnpm 10 blocks them by default)
 onlyBuiltDependencies:
   - "@parcel/watcher"
   - "@prisma/engines"
   - prisma
   - unrs-resolver
 
-# Scripts que não precisam rodar (só banner de doação)
+# Scripts that don't need to run (donation banner only)
 ignoredBuiltDependencies:
   - "@nestjs/core"
+
+# Security patches for transitive dependencies. Remove an entry once the
+# package that pins the vulnerable version ships the fix itself.
+overrides:
+  # Prisma 7.10 pins effect 3.20.0 (high severity advisory, fixed in 3.22.1).
+  effect: "^3.22.5"

@@ -12,3 +12,9 @@ onlyBuiltDependencies:
 # Scripts that don't need to run (donation banner only)
 ignoredBuiltDependencies:
   - "@nestjs/core"
+
+# Security patches for transitive dependencies. Remove an entry once the
+# package that pins the vulnerable version ships the fix itself.
+overrides:
+  # Prisma 7.10 pins effect 3.20.0 (high severity advisory, fixed in 3.22.1).
+  effect: "^3.22.5"

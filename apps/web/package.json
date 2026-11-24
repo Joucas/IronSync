@@ -4,24 +4,47 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:mock": "cross-env NEXT_PUBLIC_API_MOCKING=enabled next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check-types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:real": "cross-env E2E_MODE=real playwright test"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.108.4",
     "axios": "^1.20.0",
     "next": "16.4.2",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@tanstack/react-query-devtools": "^5.108.4",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^8.0.0",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.13",
+    "@types/node": "^24.19.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.3.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
+    "jsdom": "^31.0.1",
+    "msw": "^3.0.7",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.1.1"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

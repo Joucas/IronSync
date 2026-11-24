@@ -2,13 +2,13 @@ packages:
   - "apps/*"
   - "packages/*"
 
-# Pacotes autorizados a rodar install/build scripts (pnpm 10 bloqueia por padrão)
+# Packages allowed to run install/build scripts (pnpm 10 blocks them by default)
 onlyBuiltDependencies:
   - "@parcel/watcher"
   - "@prisma/engines"
   - prisma
   - unrs-resolver
 
-# Scripts que não precisam rodar (só banner de doação)
+# Scripts that don't need to run (donation banner only)
 ignoredBuiltDependencies:
   - "@nestjs/core"

@@ -13,9 +13,14 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    // Covers src/, test/ and prisma.config.ts; tsconfig.build.json narrows it to src/.
+    "rootDir": "./",
     "incremental": true,
     "skipLibCheck": true,
+    // TypeScript 6 defaults to strict: true and types: []; keep the previous
+    // (Nest scaffold) strictness and load the Node and Jest globals explicitly.
+    "strict": false,
+    "types": ["node", "jest"],
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
